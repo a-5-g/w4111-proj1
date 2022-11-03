@@ -109,7 +109,7 @@ def index():
   #
   # example of a database query
   #
-  cursor = g.conn.execute("SELECT * FROM Product")
+  cursor = g.conn.execute("select p.proid, p.price, p.pname, p.expiry, c.catname from Product p, Category c, Contains con where p.proid = con.proid and con.catid = c.catid")
   names = []
   for result in cursor:
     names.append(result)  # can also be accessed using result[0]
