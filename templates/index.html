@@ -16,7 +16,7 @@
       {% set outer_loop = loop.index0 %}
       {% for cell in row %}
         {% if loop.index0 == 0 and outer_loop != 0 %}
-          <td style="padding: 0.5rem"><a href={{ cell }}>{{ cell }}</a></td>
+          <td style="padding: 0.5rem"><a href="{{ url_for('details',proid=cell)}}">{{ cell }}</a></td>
         {%else%}
           <td style="padding: 0.5rem">{{ cell }}</td>
         {% endif %}
@@ -28,10 +28,12 @@
 
 
 
-<p><a href="another">Go to the other page</a></p>
+<!-- <p><a href="another">Go to the other page</a></p> -->
 
-<form method="POST" action="/add">
-<p>Enter number of products <input type="number" name="name" required> <input type="submit" value="Add"></p>
+<form method="GET" action="/details">
+<p>Enter proid to see details 
+  <input type="number" name="pid" required min="1" max="10"> 
+  <input type="submit" value="Submit"></p>
 </form>
 
 
