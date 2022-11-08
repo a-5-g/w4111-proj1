@@ -170,6 +170,24 @@ def add():
   g.conn.execute('INSERT INTO test(name) VALUES (%s)', name)
   return redirect('/')
 
+# Navigating to orders page
+@app.route('/viewOrders', methods=['GET'])
+def viewOrders():
+  custId = request.args['custId']
+  result  = g.conn.execute('''SELECT ad.orderid , Sum(ad.quantity) as itemCount , Sum(ad.quantity*p.price) as amount
+FROM added_to ad, product p 
+WHERE custid = (%s) AND p.proid = ad.proid
+GROUP By ad.orderid;''', custId)
+  return render_template('viewOrders.html', orders = result, custId = custId)  
+
+@app.route('/viewOrderDetails', methods=['GET'])
+def viewOrderDetails():
+  custId = request.args['custId']
+  orderId = request.args['orderId']
+  result  = g.conn.execute('''SELECT p.pname,b.brand_name,ct.catname,p.price,ad.quantity, ad.quantity*p.price as "Total Price" FROM added_to ad, customer c, product p, brand b, belongs_to as bt, contains cn, category ct WHERE ad.custid = c.custid AND ad.proid = p.proid AND c.custid=(%s) AND orderId = (%s) 
+  AND b.brid=bt.brid AND p.proid=bt.proid AND cn.proid = p.proid AND cn.catid =  ct.catid;''', custId,orderId)
+  return render_template('viewOrderDetails.html', productOrders = result , orderId = orderId)  
+
 
 @app.route('/login')
 def login():

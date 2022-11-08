@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+table {
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+td, th {
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 8px;
+}
+
+tr:nth-child(even) {
+  background-color: #dddddd;
+}
+</style>
+</head>
+<body>
+
+<h2>Breakdown for Order No: {{orderid}}</h2>
+<script>
+</script>
+<div name="displayOrders">
+
+  <table class="orderDetailsTable">
+    <tr>
+      <th>Product Name</th>
+      <th>Brand Name</th>
+      <th>Category</th>
+      <th>Price</th>
+      <th>Quantity</th>
+      <th>Amount</th>
+    </tr>
+    {% for product in productOrders %}
+    <tr>
+      <td>{{product["pname"]}}</td>
+      <td>{{product["brand_name"]}}</td>
+      <td>{{product["catname"]}}</td>
+      <td>{{product["price"]}}</td>
+      <td>{{product["quantity"]}}</td>
+      <td>{{product["Total Price"]}}</td>
+    </tr>
+    {% endfor %}
+
+  </table>>
+
+
+</div>

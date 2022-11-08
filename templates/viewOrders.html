@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+table {
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+td, th {
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 8px;
+}
+
+tr:nth-child(even) {
+  background-color: #dddddd;
+}
+</style>
+</head>
+<body>
+
+<h2>{cId}'s Past Orders</h2>
+<script>
+</script>
+<div name="displayOrders">
+
+  <table class="ordersTable">
+    <tr>
+      <th>Order Id</th>
+      <th>Total No of Items</th>
+      <th>Amount</th>
+    </tr>
+    {% for order in orders %}
+    <tr>
+      <td><a href="{{ url_for('viewOrderDetails',custId = custId, orderId=order['orderid']) }}">{{order["orderid"]}}</a></td>
+      <td>{{order["itemcount"]}}</td>
+      <td>{{order["amount"]}}</td>
+    </tr>
+    {% endfor %}
+
+  </table>>
+
+
+</div>
