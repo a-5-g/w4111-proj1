@@ -111,6 +111,9 @@ def index():
   #
   cursor = g.conn.execute("select p.proid, p.price, p.pname, p.expiry, c.catname from Product p, Category c, Contains con where p.proid = con.proid and con.catid = c.catid")
   names = []
+  key = cursor.keys()
+  names.append(key)
+  #print(cursor.column_names)
   for result in cursor:
     names.append(result)  # can also be accessed using result[0]
   cursor.close()
@@ -161,6 +164,24 @@ def index():
 @app.route('/another')
 def another():
   return render_template("another.html")
+
+
+
+@app.route('/details', methods=['GET'])
+def details():
+  pid = request.args['proid']
+  cursor = g.conn.execute("select * from Product p where p.proid = (%s)",pid)
+  names = []
+  key = cursor.keys()
+  names.append(key)
+  #print(cursor.column_names)
+  for result in cursor:
+    names.append(result)  # can also be accessed using result[0]
+  cursor.close()
+  context = dict(data = names)
+  return render_template("details.html", **context)
+
+
 
 
 # Example of adding new data to the database

@@ -6,24 +6,36 @@
     }
   </style>
 
-
 <body>
-  <h1>List of available Products</h1>
+  <h1>Product catalog</h1>
   <!--<div>{{data}}</div>-->
 
-  <div>
-    {% for n in data %}
-    <div>{{n}}</div>
-    {% endfor %}
-  </div>
+  <table>
+  {% for row in data %}
+      <tr>
+      {% set outer_loop = loop.index0 %}
+      {% for cell in row %}
+        {% if loop.index0 == 0 and outer_loop != 0 %}
+          <td style="padding: 0.5rem"><a href="{{ url_for('details',proid=cell)}}">{{ cell }}</a></td>
+        {%else%}
+          <td style="padding: 0.5rem">{{ cell }}</td>
+        {% endif %}
 
-<!--
-<p><a href="another">Go to the other page</a></p>
+      {% endfor %}
+      </tr>
+  {% endfor %}
+ </table>
 
-<form method="POST" action="/add">
-<p>Name of new computer scientist: <input type="text" name="name"> <input type="submit" value="Add"></p>
+
+
+<!-- <p><a href="another">Go to the other page</a></p> -->
+
+<form method="GET" action="/details">
+<p>Enter proid to see details 
+  <input type="number" name="pid" required min="1" max="10"> 
+  <input type="submit" value="Submit"></p>
 </form>
--->
+
 
 </body>
 
