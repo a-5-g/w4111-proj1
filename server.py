@@ -12,11 +12,12 @@ import os
   # accessible as a variable in index.html:
 from sqlalchemy import *
 from sqlalchemy.pool import NullPool
-from flask import Flask, request, render_template, g, redirect, Response
+from flask import Blueprint, Flask, request, render_template, g, redirect, Response, session, url_for
+
 
 tmpl_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'templates')
 app = Flask(__name__, template_folder=tmpl_dir)
-
+app.secret_key = os.urandom(24)
 
 #
 # The following is a dummy URI that does not connect to a valid database. You will need to modify it to connect to your Part 2 database in order to use the data.
@@ -91,6 +92,11 @@ def teardown_request(exception):
 #
 @app.route('/')
 def index():
+  return redirect(url_for('login'))
+
+
+@app.route('/viewProducts')
+def viewProducts():
   """
   request is a special object that Flask provides to access web request information:
 
@@ -163,6 +169,7 @@ def index():
 #
 @app.route('/another')
 def another():
+  
   return render_template("another.html")
 
 
@@ -182,6 +189,16 @@ def details():
   return render_template("details.html", **context)
 
 
+@app.route('/invalid',methods=['GET'])
+def invalid():
+  invalidLogin = False
+  
+  if 'custId' not in session or  session['custId'] == None:
+    invalidLogin = True
+  
+  return render_template('invalidComponent.html',invalidLogin = invalidLogin)
+    
+  
 
 
 # Example of adding new data to the database
@@ -210,10 +227,21 @@ def viewOrderDetails():
   return render_template('viewOrderDetails.html', productOrders = result , orderId = orderId)  
 
 
-@app.route('/login')
+@app.route('/login',methods=['GET', 'POST'])
 def login():
-    abort(401)
-    this_is_never_executed()
+  error = None
+  if request.method == 'POST':
+        result  = g.conn.execute('''SELECT c.custId FROM customer c WHERE c.name= (%s) AND c.password= (%s);''',request.form['username'],request.form['password'])
+        if result.rowcount == 0:
+          return redirect(url_for('invalid'))
+        else:
+          result = result.first()
+          #print(result)
+          session['custId'] = result[0]
+          session['custName'] = request.form['username']
+          return redirect(url_for('viewProducts'))
+  return render_template('loginpage.html')
+
 
 
 if __name__ == "__main__":
