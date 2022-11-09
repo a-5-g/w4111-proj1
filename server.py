@@ -170,7 +170,8 @@ def another():
 @app.route('/details', methods=['GET'])
 def details():
   pid = request.args['proid']
-  cursor = g.conn.execute("select * from Product p where p.proid = (%s)",pid)
+  cursor = g.conn.execute("With temp (proid, product, price, expiry, category, SupplierID) as (select p.proid, p.pname as Name , p.price as Price, p.expiry as Expiry, c.catname as Category, s.supid as SupplierID from (Product p natural inner join Contains con natural inner join Comes_from com natural inner join Category c natural inner join supplier s) where p.proid = (%s)) select temp.product, temp.price, temp.expiry, temp.category, temp.SupplierID, pr.rating, pr.review_text as Review from temp left outer join ProductReview pr on temp.proid = pr.proid", pid)
+
   names = []
   key = cursor.keys()
   names.append(key)

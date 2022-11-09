@@ -9,7 +9,18 @@
 <body>
   <h1>Product details</h1>
 
-    <div>{{data}}</div>
+  <table>
+  {% for row in data %}
+      <tr>
+      {% for cell in row %}
+          <td style="padding: 0.5rem">{{ cell }}</td>
+        {%else%}
+          <td style="padding: 0.5rem">{{ cell }}</td>
+
+      {% endfor %}
+      </tr>
+  {% endfor %}
+ </table>
 
 <!-- <p><a href="index">Go back</a></p> -->
 
