@@ -245,6 +245,22 @@ def login():
           return redirect(url_for('viewProducts'))
   return render_template('loginpage.html')
 
+@app.route('/addnewCustomer',methods=['GET','POST'])
+def addnewCustomer():
+  if request.method == 'POST':
+    try:
+      g.conn.execute('''INSERT INTO CUSTOMER(name,password,phone) VALUES(%s,%s,%s);''',request.form['name'],request.form['password'],request.form['phone'])
+      result  = g.conn.execute('''SELECT c.custId FROM customer c WHERE c.name= (%s) AND c.password= (%s);''',request.form['name'],request.form['password'])
+      
+      session['custId'] = result.first()[0]
+      session['custName'] = request.form['name']
+
+      # Adding the address
+      g.conn.execute('''INSERT INTO ADDRESS(street,aptno,city,state,zip,custid) VALUES(%s,%s,%s,%s,%s,%s);''',request.form['street'],request.form['aptno'],request.form['city'],request.form['state'],request.form['zip'],session['custId'])
+      return redirect(url_for('viewProducts'))
+    except:
+      return redirect(url_for('invalid'))
+  return render_template('signUpForm.html')
 
 
 if __name__ == "__main__":
