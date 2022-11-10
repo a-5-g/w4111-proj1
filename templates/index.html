@@ -11,6 +11,7 @@
   <!--<div>{{data}}</div>-->
 
   <h4> Click on a product ID to see details about that product </h4>
+  <form>
   <table>
   {% for row in data %}
       <tr>
@@ -21,11 +22,15 @@
         {%else%}
           <td style="padding: 0.5rem">{{ cell }}</td>
         {% endif %}
-
       {% endfor %}
+        <td>
+        <label>Quantity</label><br>
+        <input type="number" name="quantity" required min="0" max = "100" value = "0"><br>
+      </td>
       </tr>
   {% endfor %}
  </table>
+</form>
 
 
 
