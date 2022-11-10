@@ -200,7 +200,9 @@ def invalid():
   return render_template('invalidComponent.html',invalidLogin = invalidLogin)
     
   
-
+@app.route('/orderplaced')
+def orderplaced():
+  return render_template("orderplaced.html", custId = session['custId'])
 
 # Example of adding new data to the database
 @app.route('/add', methods=['POST'])

@@ -25,11 +25,16 @@
       {% endfor %}
         <td>
         <label>Quantity</label><br>
-        <input type="number" name="quantity" required min="0" max = "100" value = "0"><br>
+        <input type="number" name={{loop.index}} required min="0" max = "100" value = "0"><br>
       </td>
       </tr>
   {% endfor %}
  </table>
+</form>
+
+<form method="GET" action="/orderplaced">
+<p>
+  <input type="submit" value="Submit the order"></p>
 </form>
 
 
