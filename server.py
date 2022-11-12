@@ -12,8 +12,8 @@ import os
   # accessible as a variable in index.html:
 from sqlalchemy import *
 from sqlalchemy.pool import NullPool
-from flask import Blueprint, Flask, request, render_template, g, redirect, Response, session, url_for
-
+from flask import Blueprint, Flask, request, render_template, g, redirect, Response, session, url_for , jsonify
+from datetime import date
 
 tmpl_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'templates')
 app = Flask(__name__, template_folder=tmpl_dir)
@@ -109,8 +109,6 @@ def viewProducts():
   """
 
   # DEBUG: this is debugging code to see what request looks like
-  print(request.args)
-
 
   #
   # example of a database query
@@ -118,45 +116,20 @@ def viewProducts():
   cursor = g.conn.execute("select p.proid, p.price, p.pname, p.expiry, c.catname from Product p, Category c, Contains con where p.proid = con.proid and con.catid = c.catid")
   names = []
   key = cursor.keys()
-  names.append(key)
   #print(cursor.column_names)
   for result in cursor:
     names.append(result)  # can also be accessed using result[0]
+  #session["productDetails"] = jsonify({'result': [dict(row) for row in names]}) 
   cursor.close()
-
-  #
-  # Flask uses Jinja templates, which is an extension to HTML where you can
-  # pass data to a template and dynamically generate HTML based on the data
-  # (you can think of it as simple PHP)
-  # documentation: https://realpython.com/primer-on-jinja-templating/
-  #
-  # You can see an example template in templates/index.html
-  #
-  # context are the variables that are passed to the template.
-  # for example, "data" key in the context variable defined below will be
-  # accessible as a variable in index.html:
-  #
-  #     # will print: [u'grace hopper', u'alan turing', u'ada lovelace']
-  #     <div>{{data}}</div>
-  #
-  #     # creates a <div> tag for each element in data
-  #     # will print:
-  #     #
-  #     #   <div>grace hopper</div>
-  #     #   <div>alan turing</div>
-  #     #   <div>ada lovelace</div>
-  #     #
-  #     {% for n in data %}
-  #     <div>{{n}}</div>
-  #     {% endfor %}
-  #
   context = dict(data = names)
-
 
   #
   # render_template looks in the templates/ folder for files.
   # for example, the below file reads template/index.html
   #
+  session["productDetails"] = []
+  for row in names:
+    session["productDetails"].append(dict(row)) 
   return render_template("index.html", **context)
 
 #
@@ -262,6 +235,29 @@ def addnewCustomer():
       return redirect(url_for('invalid'))
   return render_template('signUpForm.html')
 
+@app.route('/addNewOrder',methods=["POST"])
+def addNewOrder():
+  ordersTable = request.form
+  productList = session['productDetails']
+  paymentMethod = request.form["payment"]
+
+
+  # Creating an Order Id
+  orderId = g.conn.execute('''INSERT INTO PLACESORDER(custid,pay_method,pay_date) VALUES(%s,%s,%s) RETURNING orderid''',session["custId"],paymentMethod,date.today())
+  orderId = orderId.first()[0]
+  # now we need to insert entries in the added to of the items included in the given order
+  for row in ordersTable:
+    try:
+      if int(row):
+        productIndex = int(row)-1
+        quantity = int(ordersTable[row])
+        if quantity!=0:
+          productDetails = productList[productIndex]  
+          g.conn.execute('''INSERT INTO ADDED_TO(orderid,proid,quantity,custid) VALUES(%s,%s,%s,%s)''',orderId,productDetails["proid"],quantity,session["custId"])
+    except:
+      continue
+
+  return render_template('orderplaced.html',orderId = orderId, custId = session["custId"])
 
 if __name__ == "__main__":
   import click

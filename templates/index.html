@@ -11,13 +11,21 @@
   <!--<div>{{data}}</div>-->
 
   <h4> Click on a product ID to see details about that product </h4>
-  <form>
-  <table>
+  <form method="POST" action="/addNewOrder"> 
+  <table name="ordersTable">
+    <tr>
+      <th>Product ID</th>
+      <th>Price</th>
+      <th>Product Name</th>
+      <th>Expiry Date</th>
+      <th>Category</th>
+      <th>Buy Quantity</th>
+    </tr>
   {% for row in data %}
       <tr>
       {% set outer_loop = loop.index0 %}
       {% for cell in row %}
-        {% if loop.index0 == 0 and outer_loop != 0 %}
+        {% if loop.index0 == 0 %}
           <td style="padding: 0.5rem"><a href="{{ url_for('details',proid=cell)}}">{{ cell }}</a></td>
         {%else%}
           <td style="padding: 0.5rem">{{ cell }}</td>
@@ -30,19 +38,19 @@
       </tr>
   {% endfor %}
  </table>
+
+ <label for="payment">Choose your payment method:</label>
+ <select name="payment" id="payment">
+   <option value="Credit card">Credit Card</option>
+   <option value="Debit card">Debit Card</option>
+   <option value="Paypal">Paypal</option>
+  </select>
+
+ <button type="submit">Submit</button>
+
 </form>
 
 
-<form action="/action_page.php" method="get">
-  <label for="payment">Choose your payment method:</label>
-  <input list="payments" name="payment" id="payment">
-  <datalist id="payments">
-    <option value="Credit card">
-    <option value="Debit card">
-    <option value="Paypal">
-  </datalist>
-  <input type="submit">
-</form>
 
 <!-- <form method="GET" action="/orderplaced">
 <p>
