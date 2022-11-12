@@ -1,69 +1,68 @@
 <html>
-  <style>
-    body{ 
-      font-size: 15pt;
-      font-family: arial;
-    }
-  </style>
+<style>
+  body {
+    font-size: 15pt;
+    font-family: arial;
+  }
+</style>
 
 <body>
   <h2>Product catalog</h2>
   <!--<div>{{data}}</div>-->
 
-<h5> Click on a product ID to see details about that product. Choose your quantity for each product and your payment method to place an order </h5>
-<form method="POST" action="/addNewOrder"> 
-  <table name="ordersTable">
-    <tr>
-      <th>Product ID</th>
-      <th>Price</th>
-      <th>Product Name</th>
-      <th>Expiry Date</th>
-      <th>Category</th>
-      <th>Buy Quantity</th>
-    </tr>
-  {% for row in data %}
+  <h5> Click on a product ID to see details about that product. Choose your quantity for each product and your payment
+    method to place an order </h5>
+  <form method="POST" action="/addNewOrder">
+    <table name="ordersTable">
       <tr>
-      {% set outer_loop = loop.index0 %}
-      {% for cell in row %}
-        {% if loop.index0 == 0 %}
-          <td style="padding: 0.5rem"><a href="{{ url_for('details',proid=cell)}}">{{ cell }}</a></td>
-        {%else%}
-          <td style="padding: 0.5rem">{{ cell }}</td>
-        {% endif %}
-      {% endfor %}
-      {% if outer_loop != 0 %}
-        <td>
-        <label>Quantity</label><br>
-        <input type="number" name={{loop.index}} required min="0" max = "100" value = "0"><br>
-      </td>
+        <th>Product ID</th>
+        <th>Price</th>
+        <th>Product Name</th>
+        <th>Expiry Date</th>
+        <th>Category</th>
+        <th>Buy Quantity</th>
       </tr>
-      {% endif %}
-  {% endfor %}
- </table>
+      {% for row in data %}
+      <tr>
+        {% set outer_loop = loop.index0 %}
+        {% for cell in row %}
+        {% if loop.index0 == 0 %}
+        <td style="padding: 0.5rem"><a href="{{ url_for('details',proid=cell)}}">{{ cell }}</a></td>
+        {%else%}
+        <td style="padding: 0.5rem">{{ cell }}</td>
+        {% endif %}
+        {% endfor %}
+        <td>
+          <label>Quantity</label><br>
+          <input type="number" name={{loop.index}} required min="0" max="100" value="0"><br>
+        </td>
+      </tr>
+      {% endfor %}
+    </table>
 
- <label for="payment">Choose your payment method:</label>
- <select name="payment" id="payment">
-   <option value="Credit card">Credit Card</option>
-   <option value="Debit card">Debit Card</option>
-   <option value="Paypal">Paypal</option>
-  </select>
+    <label for="payment">Choose your payment method:</label>
+    <select name="payment" id="payment">
+      <option value="Credit card">Credit Card</option>
+      <option value="Debit card">Debit Card</option>
+      <option value="Paypal">Paypal</option>
+    </select>
 
- <button type="submit">Submit</button>
+    <button type="submit">Submit</button>
 
-</form>
+  </form>
 
 
 
-<!-- <form method="GET" action="/orderplaced">
+  <!-- <form method="GET" action="/orderplaced">
 <p>
   <input type="submit" value="Submit the order"></p>
 </form>
  -->
 
 
-<!-- <p><a href="another">Go to the other page</a></p> -->
+  <!-- <p><a href="another">Go to the other page</a></p> -->
 
-<!-- <form method="GET" action="/details">
+  <!-- <form method="GET" action="/details">
 <p>Enter proid to see details 
   <input type="number" name="pid" required min="1" max="10"> 
   <input type="submit" value="Submit"></p>
