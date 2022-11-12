@@ -172,6 +172,9 @@ def another():
   
   return render_template("another.html")
 
+@app.route('/default_buttons/')
+def default_buttons():
+  return render_template("default_buttons.html")
 
 
 @app.route('/details', methods=['GET'])
