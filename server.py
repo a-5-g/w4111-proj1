@@ -130,7 +130,7 @@ def viewProducts():
   session["productDetails"] = []
   for row in names:
     session["productDetails"].append(dict(row)) 
-  return render_template("index.html", **context, custId=session['custId'])
+  return render_template("index.html", **context, custId=session['custId'], custName=session["custName"])
 
 #
 # This is an example of a different path.  You can see it at:
@@ -140,16 +140,6 @@ def viewProducts():
 # Notice that the function name is another() rather than index()
 # The functions for each app.route need to have different names
 #
-@app.route('/another')
-def another():
-  
-  return render_template("another.html")
-
-@app.route('/default_buttons/')
-def default_buttons():
-  return render_template("default_buttons.html")
-
-
 @app.route('/details', methods=['GET'])
 def details():
   pid = request.args['proid']
@@ -163,7 +153,7 @@ def details():
     names.append(result)  # can also be accessed using result[0]
   cursor.close()
   context = dict(data = names)
-  return render_template("details.html", **context)
+  return render_template("details.html", **context, custId=session['custId'], custName=session["custName"])
 
 
 @app.route('/invalid',methods=['GET'])
@@ -178,14 +168,7 @@ def invalid():
   
 @app.route('/orderplaced')
 def orderplaced():
-  return render_template("orderplaced.html", custId = session['custId'])
-
-# Example of adding new data to the database
-@app.route('/add', methods=['POST'])
-def add():
-  name = request.form['name']
-  g.conn.execute('INSERT INTO test(name) VALUES (%s)', name)
-  return redirect('/')
+  return render_template("orderplaced.html", custId=session['custId'], custName=session["custName"])
 
 # Navigating to orders page
 @app.route('/viewOrders', methods=['GET'])
@@ -195,7 +178,7 @@ def viewOrders():
 FROM added_to ad, product p 
 WHERE custid = (%s) AND p.proid = ad.proid
 GROUP By ad.orderid;''', custId)
-  return render_template('viewOrders.html', orders = result, custId = custId)  
+  return render_template('viewOrders.html', orders = result, custId = custId, custName = session["custName"])  
 
 @app.route('/viewOrderDetails', methods=['GET'])
 def viewOrderDetails():
@@ -203,7 +186,7 @@ def viewOrderDetails():
   orderId = request.args['orderId']
   result  = g.conn.execute('''SELECT p.pname,b.brand_name,ct.catname,p.price,ad.quantity, ad.quantity*p.price as "Total Price" FROM added_to ad, customer c, product p, brand b, belongs_to as bt, contains cn, category ct WHERE ad.custid = c.custid AND ad.proid = p.proid AND c.custid=(%s) AND orderId = (%s) 
   AND b.brid=bt.brid AND p.proid=bt.proid AND cn.proid = p.proid AND cn.catid =  ct.catid;''', custId,orderId)
-  return render_template('viewOrderDetails.html', productOrders = result , orderId = orderId)  
+  return render_template('viewOrderDetails.html', productOrders = result , orderId = orderId, custId=session['custId'], custName=session["custName"])  
 
 
 @app.route('/login',methods=['GET', 'POST'])
@@ -265,8 +248,8 @@ def addNewOrder():
     except:
       continue
 
-  return render_template('orderplaced.html',orderId = orderId, custId = session["custId"])
-
+  return render_template('orderplaced.html',orderId = orderId, custId=session['custId'], custName=session["custName"])
+  
 if __name__ == "__main__":
   import click
 

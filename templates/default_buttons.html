@@ -23,6 +23,11 @@ button:hover {
 	top: 0;
 	right: 70px;
 }
+.rightAlignThird{
+	position: absolute;
+	top: 0;
+	right: 140px;
+}
 header{
     position: relative;
    width: 100%;   
@@ -35,6 +40,7 @@ header{
 	<button onclick="history.back()">Go Back</button> 
 	<button type="button" class="rightAlign" onclick="window.location.href='{{ url_for('logout') }}';">Logout</button>
 	<button type="button" class="rightAlignSecond" onclick="window.location.href='{{ url_for('viewOrders',custId = custId) }}';">Orders</button>
+	<button type="button" class="rightAlignThird">Welcome {{custName}}</button>
 </header>
 
 </html>
