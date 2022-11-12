@@ -32,11 +32,23 @@
  </table>
 </form>
 
-<form method="GET" action="/orderplaced">
+
+<form action="/action_page.php" method="get">
+  <label for="payment">Choose your payment method:</label>
+  <input list="payments" name="payment" id="payment">
+  <datalist id="payments">
+    <option value="Credit card">
+    <option value="Debit card">
+    <option value="Paypal">
+  </datalist>
+  <input type="submit">
+</form>
+
+<!-- <form method="GET" action="/orderplaced">
 <p>
   <input type="submit" value="Submit the order"></p>
 </form>
-
+ -->
 
 
 <!-- <p><a href="another">Go to the other page</a></p> -->
