@@ -1,17 +1,30 @@
+<!DOCTYPE html>
 <html>
+<head>
 <style>
-  body {
-    font-size: 15pt;
-    font-family: arial;
-  }
+table {
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+td, th {
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 8px;
+}
+
+tr:nth-child(even) {
+  background-color: #dddddd;
+}
 </style>
 
 <body>
   <h2>Product catalog</h2>
   <!--<div>{{data}}</div>-->
 
-  <h5> Click on a product ID to see details about that product. Choose your quantity for each product and your payment
-    method to place an order </h5>
+  <h3> Click on a product ID to see details about that product. Choose your quantity for each product and your payment
+    method to place an order </h3>
   <form method="POST" action="/addNewOrder">
     <table name="ordersTable">
       <tr>
@@ -33,7 +46,6 @@
         {% endif %}
         {% endfor %}
         <td>
-          <label>Quantity</label><br>
           <input type="number" name={{loop.index}} required min="0" max="100" value="0"><br>
         </td>
       </tr>
