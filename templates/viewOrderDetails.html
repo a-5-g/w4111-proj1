@@ -19,6 +19,9 @@ tr:nth-child(even) {
 }
 </style>
 </head>
+{% with custId=custId %}
+  {% include 'default_buttons.html' %}
+{% endwith %}
 <body>
 
 <h2>Breakdown for Order No: {{orderId}}</h2>

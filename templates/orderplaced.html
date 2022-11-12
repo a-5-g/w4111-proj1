@@ -5,7 +5,9 @@
       font-family: arial;
     }
   </style>
-
+{% with custId=custId %}
+{% include 'default_buttons.html' %}
+{% endwith %}
 <body>
 
   <h2> Your order has been placed successfully!</h2>

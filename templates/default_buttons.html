@@ -1,15 +1,40 @@
 <!DOCTYPE html>
 <html>
-<head>
-	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title></title>
-</head>
-<body>
+<style>
+	button {
+	background-color: #0444aa;
+	color: white;
+	padding: 6px 12px;
+	margin: 2px 0;
+	border: none;
+	cursor: pointer;
+	font-size: small;
+}
+button:hover {
+  opacity: 0.8;
+}
+.rightAlign {
+	position: absolute;
+	top: 0;
+	right: 0;
+}
+.rightAlignSecond{
+	position: absolute;
+	top: 0;
+	right: 70px;
+}
+header{
+    position: relative;
+   width: 100%;   
+   margin: 0;
+   padding: 0;
+}
+</style>
 
-	<button onclick="history.back()">Go Back</button>
-	<!-- <button> Logout </button> -->
-	<a href="{{ url_for('login')}}"> Logout </a>
+<header>
+	<button onclick="history.back()">Go Back</button> 
+	<button type="button" class="rightAlign" onclick="window.location.href='{{ url_for('logout') }}';">Logout</button>
+	<button type="button" class="rightAlignSecond" onclick="window.location.href='{{ url_for('viewOrders',custId = custId) }}';">Orders</button>
+</header>
 
-</body>
 </html>

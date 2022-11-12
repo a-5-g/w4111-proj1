@@ -130,7 +130,7 @@ def viewProducts():
   session["productDetails"] = []
   for row in names:
     session["productDetails"].append(dict(row)) 
-  return render_template("index.html", **context)
+  return render_template("index.html", **context, custId=session['custId'])
 
 #
 # This is an example of a different path.  You can see it at:
@@ -208,7 +208,6 @@ def viewOrderDetails():
 
 @app.route('/login',methods=['GET', 'POST'])
 def login():
-  error = None
   if request.method == 'POST':
         result  = g.conn.execute('''SELECT c.custId FROM customer c WHERE c.name= (%s) AND c.password= (%s);''',request.form['username'],request.form['password'])
         if result.rowcount == 0:
@@ -220,6 +219,12 @@ def login():
           session['custName'] = request.form['username']
           return redirect(url_for('viewProducts'))
   return render_template('loginpage.html')
+
+@app.route('/logout',methods=['GET'])
+def logout():
+  session.pop('custId',None)
+  return redirect(url_for('login'))
+
 
 @app.route('/addnewCustomer',methods=['GET','POST'])
 def addnewCustomer():

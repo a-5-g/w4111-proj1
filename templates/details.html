@@ -18,6 +18,9 @@ tr:nth-child(even) {
   background-color: #dddddd;
 }
 </style>
+{% with custId=custId %}
+  {% include 'default_buttons.html' %}
+{% endwith %}
 <body>
   <h1>Product details</h1>
 
