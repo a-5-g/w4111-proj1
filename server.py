@@ -232,6 +232,20 @@ def addNewOrder():
   productList = session['productDetails']
   paymentMethod = request.form["payment"]
 
+  count = 0
+  for row in ordersTable:
+    try:
+      if int(row):
+        productIndex = int(row)-1
+        quantity = int(ordersTable[row])
+        count+=1
+    except:
+      continue
+  
+  if count==0:
+    # no updated the element
+    return redirect(url_for('invalid'))
+
 
   # Creating an Order Id
   orderId = g.conn.execute('''INSERT INTO PLACESORDER(custid,pay_method,pay_date) VALUES(%s,%s,%s) RETURNING orderid''',session["custId"],paymentMethod,date.today())
@@ -249,7 +263,7 @@ def addNewOrder():
       continue
 
   return render_template('orderplaced.html',orderId = orderId, custId=session['custId'], custName=session["custName"])
-  
+
 if __name__ == "__main__":
   import click
 
