@@ -7,11 +7,11 @@
   </style>
 
 <body>
-  <h1>Product catalog</h1>
+  <h2>Product catalog</h2>
   <!--<div>{{data}}</div>-->
 
-  <h4> Click on a product ID to see details about that product </h4>
-  <form method="POST" action="/addNewOrder"> 
+<h5> Click on a product ID to see details about that product. Choose your quantity for each product and your payment method to place an order </h5>
+<form method="POST" action="/addNewOrder"> 
   <table name="ordersTable">
     <tr>
       <th>Product ID</th>
@@ -31,11 +31,13 @@
           <td style="padding: 0.5rem">{{ cell }}</td>
         {% endif %}
       {% endfor %}
+      {% if outer_loop != 0 %}
         <td>
         <label>Quantity</label><br>
         <input type="number" name={{loop.index}} required min="0" max = "100" value = "0"><br>
       </td>
       </tr>
+      {% endif %}
   {% endfor %}
  </table>
 
