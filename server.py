@@ -175,10 +175,10 @@ def orderplaced():
 @app.route('/viewOrders', methods=['GET'])
 def viewOrders():
   custId = request.args['custId']
-  result  = g.conn.execute('''SELECT ad.orderid , Sum(ad.quantity) as itemCount , Sum(ad.quantity*p.price) as amount, po.pay_date as Order_date
+  result  = g.conn.execute('''SELECT ad.orderid , Sum(ad.quantity) as itemCount , Sum(ad.quantity*p.price) as amount, po.pay_date as Order_date,po.pay_method
 FROM added_to ad, product p, PlacesOrder po
-WHERE ad.custid = (%s) AND p.proid = ad.proid AND po.orderid = ad.orderid
-GROUP By ad.orderid, po.pay_date;''', custId)
+WHERE ad.custid = (%s) AND p.proid = ad.proid AND po.orderid = ad.orderid 
+GROUP By ad.orderid, po.pay_date, po.pay_method;''', custId)
   return render_template('viewOrders.html', orders = result, custId = custId, custName = session["custName"])  
 
 @app.route('/viewOrderDetails', methods=['GET'])
