@@ -24,13 +24,31 @@ tr:nth-child(even) {
 <body>
   <h1>Product details</h1>
 
-  <h4>The details of the product are as follows: </h4>
+  <!-- <h4>The product details are: </h4> -->
+
+  <table>
+  {% for row in data %}
+      <tr>
+      {% set outer_loop = loop.index0 %}
+      {% for cell in row %}
+        {% if loop.index0 <= 7 and (outer_loop == 0 or outer_loop == 1)%}
+          <td style="padding: 0.5rem">{{ cell }}</td>
+        {% endif %}
+      {% endfor %}
+      </tr>
+      {% endfor %}
+ </table>
+
+ <h4> The rating(s) and review(s) of the product are: </h4>
+
 
   <table>
   {% for row in data %}
       <tr>
       {% for cell in row %}
+        {% if loop.index0 > 7 %}
           <td style="padding: 0.5rem">{{ cell }}</td>
+        {% endif %}
       {% endfor %}
       </tr>
   {% endfor %}
