@@ -34,14 +34,12 @@ tr:nth-child(even) {
       <th>Order Id</th>
       <th>Total No of Items</th>
       <th>Amount</th>
-      <th>Date</th>
     </tr>
     {% for order in orders %}
     <tr>
       <td><a href="{{ url_for('viewOrderDetails',custId = custId, orderId=order['orderid']) }}">{{order["orderid"]}}</a></td>
       <td>{{order["itemcount"]}}</td>
       <td>{{order["amount"]}}</td>
-      <td>{{order["pay_date"]}}</td>
     </tr>
     {% endfor %}
 
