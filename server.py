@@ -14,6 +14,7 @@ from sqlalchemy import *
 from sqlalchemy.pool import NullPool
 from flask import Blueprint, Flask, request, render_template, g, redirect, Response, session, url_for , jsonify
 from datetime import date
+from decimal import Decimal
 
 tmpl_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'templates')
 app = Flask(__name__, template_folder=tmpl_dir)
@@ -116,10 +117,8 @@ def viewProducts():
   cursor = g.conn.execute("select p.proid, p.price, p.pname, p.expiry, c.catname from Product p, Category c, Contains con where p.proid = con.proid and con.catid = c.catid")
   names = []
   key = cursor.keys()
-  #print(cursor.column_names)
   for result in cursor:
     names.append(result)  # can also be accessed using result[0]
-  #session["productDetails"] = jsonify({'result': [dict(row) for row in names]}) 
   cursor.close()
   context = dict(data = names)
 
@@ -129,8 +128,10 @@ def viewProducts():
   #
   session["productDetails"] = []
   for row in names:
-    session["productDetails"].append(dict(row)) 
-  return render_template("index.html", **context, custId=session['custId'], custName=session["custName"])
+    tmp = dict(row)
+    tmp['price'] = float(tmp['price'])
+    session["productDetails"].append(tmp) 
+  return render_template("index.html", **context, custId = session['custId'], custName = session["custName"])
 
 #
 # This is an example of a different path.  You can see it at:
@@ -197,9 +198,11 @@ def login():
           return redirect(url_for('invalid'))
         else:
           result = result.first()
-          #print(result)
+          print(result)
           session['custId'] = result[0]
+          print(session['custId'])
           session['custName'] = request.form['username']
+          print(session['custName'])
           return redirect(url_for('viewProducts'))
   return render_template('loginpage.html')
 
