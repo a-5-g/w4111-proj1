@@ -198,11 +198,8 @@ def login():
           return redirect(url_for('invalid'))
         else:
           result = result.first()
-          print(result)
           session['custId'] = result[0]
-          print(session['custId'])
           session['custName'] = request.form['username']
-          print(session['custName'])
           return redirect(url_for('viewProducts'))
   return render_template('loginpage.html')
 

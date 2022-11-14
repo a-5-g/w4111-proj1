@@ -25,8 +25,7 @@ tr:nth-child(even) {
 <body>
 
 <h2>{{custName}}'s Past Orders</h2>
-<script>
-</script>
+
 <div name="displayOrders">
 
   <table class="ordersTable">
@@ -41,7 +40,7 @@ tr:nth-child(even) {
       <td><a href="{{ url_for('viewOrderDetails',custId = custId, orderId=order['orderid']) }}">{{order["orderid"]}}</a></td>
       <td>{{order["itemcount"]}}</td>
       <td>{{order["amount"]}}</td>
-      <td>{{order["Order_date"]}}</td>
+      <td>{{order["order_date"]}}</td>
     </tr>
     {% endfor %}
 
