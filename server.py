@@ -98,39 +98,42 @@ def index():
 
 @app.route('/viewProducts')
 def viewProducts():
-  """
-  request is a special object that Flask provides to access web request information:
+  try:
+    """
+    request is a special object that Flask provides to access web request information:
 
-  request.method:   "GET" or "POST"
-  request.form:     if the browser submitted a form, this contains the data in the form
-  request.args:     dictionary of URL arguments, e.g., {a:1, b:2} for http://localhost?a=1&b=2
+    request.method:   "GET" or "POST"
+    request.form:     if the browser submitted a form, this contains the data in the form
+    request.args:     dictionary of URL arguments, e.g., {a:1, b:2} for http://localhost?a=1&b=2
 
-  See its API: https://flask.palletsprojects.com/en/2.0.x/api/?highlight=incoming%20request%20data
+    See its API: https://flask.palletsprojects.com/en/2.0.x/api/?highlight=incoming%20request%20data
 
-  """
+    """
 
-  # DEBUG: this is debugging code to see what request looks like
+    # DEBUG: this is debugging code to see what request looks like
 
-  #
-  # example of a database query
-  #
-  cursor = g.conn.execute("select p.proid, p.price, p.pname, p.expiry, c.catname from Product p, Category c, Contains con where p.proid = con.proid and con.catid = c.catid")
-  names = []
-  key = cursor.keys()
-  for result in cursor:
-    names.append(result)  # can also be accessed using result[0]
-  cursor.close()
-  context = dict(data = names)
+    #
+    # example of a database query
+    #
+    cursor = g.conn.execute("select p.proid, p.price, p.pname, p.expiry, c.catname from Product p, Category c, Contains con where p.proid = con.proid and con.catid = c.catid")
+    names = []
+    key = cursor.keys()
+    for result in cursor:
+      names.append(result)  # can also be accessed using result[0]
+    cursor.close()
+    context = dict(data = names)
 
-  #
-  # render_template looks in the templates/ folder for files.
-  # for example, the below file reads template/index.html
-  #
-  session["productDetails"] = []
-  for row in names:
-    tmp = dict(row)
-    tmp['price'] = float(tmp['price'])
-    session["productDetails"].append(tmp) 
+    #
+    # render_template looks in the templates/ folder for files.
+    # for example, the below file reads template/index.html
+    #
+    session["productDetails"] = []
+    for row in names:
+      tmp = dict(row)
+      tmp['price'] = float(tmp['price'])
+      session["productDetails"].append(tmp) 
+  except:
+    redirect(url_for('invalid'))
   return render_template("index.html", **context, custId = session['custId'], custName = session["custName"])
 
 #
@@ -143,17 +146,20 @@ def viewProducts():
 #
 @app.route('/details', methods=['GET'])
 def details():
-  pid = request.args['proid']
-  cursor = g.conn.execute("With temp (proid, product, price, expiry, category, SupplierID, supplier_phone, supplier_address) as (select p.proid, p.pname as Name , p.price as Price, p.expiry as Expiry, c.catname as Category, s.supid as SupplierID, s.phone as supplier_phone, s.address as supplier_address from (Product p natural inner join Contains con natural inner join Comes_from com natural inner join Category c natural inner join supplier s) where p.proid = (%s)), brandtable (proid, brand_name) as (select bt.proid, b.brand_name from brand b natural inner join belongs_to bt) select temp.product as Product, temp.price, temp.expiry, temp.category, brandtable.brand_name as brand, temp.SupplierID as supplier_id, temp.supplier_phone, temp.supplier_address, pr.rating, pr.review_text as Review from (temp left outer join ProductReview pr on temp.proid = pr.proid) left outer join brandtable on temp.proid = brandtable.proid", pid)
+  try:
+    pid = request.args['proid']
+    cursor = g.conn.execute("With temp (proid, product, price, expiry, category, SupplierID, supplier_phone, supplier_address) as (select p.proid, p.pname as Name , p.price as Price, p.expiry as Expiry, c.catname as Category, s.supid as SupplierID, s.phone as supplier_phone, s.address as supplier_address from (Product p natural inner join Contains con natural inner join Comes_from com natural inner join Category c natural inner join supplier s) where p.proid = (%s)), brandtable (proid, brand_name) as (select bt.proid, b.brand_name from brand b natural inner join belongs_to bt) select temp.product as Product, temp.price, temp.expiry, temp.category, brandtable.brand_name as brand, temp.SupplierID as supplier_id, temp.supplier_phone, temp.supplier_address, pr.rating, pr.review_text as Review from (temp left outer join ProductReview pr on temp.proid = pr.proid) left outer join brandtable on temp.proid = brandtable.proid", pid)
 
-  names = []
-  key = cursor.keys()
-  names.append(key)
-  #print(cursor.column_names)
-  for result in cursor:
-    names.append(result)  # can also be accessed using result[0]
-  cursor.close()
-  context = dict(data = names)
+    names = []
+    key = cursor.keys()
+    names.append(key)
+    #print(cursor.column_names)
+    for result in cursor:
+      names.append(result)  # can also be accessed using result[0]
+    cursor.close()
+    context = dict(data = names)
+  except:
+    redirect(url_for('invalid'))
   return render_template("details.html", **context, custId=session['custId'], custName=session["custName"])
 
 
@@ -174,38 +180,46 @@ def orderplaced():
 # Navigating to orders page
 @app.route('/viewOrders', methods=['GET'])
 def viewOrders():
-  custId = request.args['custId']
-  result  = g.conn.execute('''SELECT ad.orderid , Sum(ad.quantity) as itemCount , Sum(ad.quantity*p.price) as amount, po.pay_date as Order_date,po.pay_method
-FROM added_to ad, product p, PlacesOrder po
-WHERE ad.custid = (%s) AND p.proid = ad.proid AND po.orderid = ad.orderid 
-GROUP By ad.orderid, po.pay_date, po.pay_method;''', custId)
+  try:
+    custId = request.args['custId']
+    result  = g.conn.execute('''SELECT ad.orderid , Sum(ad.quantity) as itemCount , Sum(ad.quantity*p.price) as amount, po.pay_date as Order_date,po.pay_method FROM added_to ad, product p, PlacesOrder po WHERE ad.custid = (%s) AND p.proid = ad.proid AND po.orderid = ad.orderid GROUP By ad.orderid, po.pay_date, po.pay_method;''', custId)
+  except:
+    redirect(url_for('invalid'))
   return render_template('viewOrders.html', orders = result, custId = custId, custName = session["custName"])  
 
 @app.route('/viewOrderDetails', methods=['GET'])
 def viewOrderDetails():
-  custId = request.args['custId']
-  orderId = request.args['orderId']
-  result  = g.conn.execute('''SELECT p.pname,b.brand_name,ct.catname,p.price,ad.quantity, ad.quantity*p.price as "Total Price" FROM added_to ad, customer c, product p, brand b, belongs_to as bt, contains cn, category ct WHERE ad.custid = c.custid AND ad.proid = p.proid AND c.custid=(%s) AND orderId = (%s) 
-  AND b.brid=bt.brid AND p.proid=bt.proid AND cn.proid = p.proid AND cn.catid =  ct.catid;''', custId,orderId)
+  try:
+    custId = request.args['custId']
+    orderId = request.args['orderId']
+    result  = g.conn.execute('''SELECT p.pname,b.brand_name,ct.catname,p.price,ad.quantity, ad.quantity*p.price as "Total Price" FROM added_to ad, customer c, product p, brand b, belongs_to as bt, contains cn, category ct WHERE ad.custid = c.custid AND ad.proid = p.proid AND c.custid=(%s) AND orderId = (%s) AND b.brid=bt.brid AND p.proid=bt.proid AND cn.proid = p.proid AND cn.catid =  ct.catid;''', custId,orderId)
+  except:
+    redirect(url_for('invalid'))
   return render_template('viewOrderDetails.html', productOrders = result , orderId = orderId, custId=session['custId'], custName=session["custName"])  
 
 
 @app.route('/login',methods=['GET', 'POST'])
 def login():
-  if request.method == 'POST':
-        result  = g.conn.execute('''SELECT c.custId FROM customer c WHERE c.name= (%s) AND c.password= (%s);''',request.form['username'],request.form['password'])
-        if result.rowcount == 0:
-          return redirect(url_for('invalid'))
-        else:
-          result = result.first()
-          session['custId'] = result[0]
-          session['custName'] = request.form['username']
-          return redirect(url_for('viewProducts'))
+  try:
+    if request.method == 'POST':
+          result  = g.conn.execute('''SELECT c.custId FROM customer c WHERE c.name= (%s) AND c.password= (%s);''',request.form['username'],request.form['password'])
+          if result.rowcount == 0:
+            return redirect(url_for('invalid'))
+          else:
+            result = result.first()
+            session['custId'] = result[0]
+            session['custName'] = request.form['username']
+            return redirect(url_for('viewProducts'))
+  except:
+    redirect(url_for('invalid'))
   return render_template('loginpage.html')
 
 @app.route('/logout',methods=['GET'])
 def logout():
-  session.pop('custId',None)
+  try:
+    session.pop('custId',None)
+  except:
+    redirect(url_for('invalid'))
   return redirect(url_for('login'))
 
 
@@ -228,39 +242,43 @@ def addnewCustomer():
 
 @app.route('/addNewOrder',methods=["POST"])
 def addNewOrder():
-  ordersTable = request.form
-  productList = session['productDetails']
-  paymentMethod = request.form["payment"]
+  try:
+    ordersTable = request.form
+    productList = session['productDetails']
+    paymentMethod = request.form["payment"]
 
-  count = 0
-  for row in ordersTable:
-    try:
-      if int(row):
-        productIndex = int(row)-1
-        quantity = int(ordersTable[row])
-        count+=1
-    except:
-      continue
-  
-  if count==0:
-    # no updated the element
-    return redirect(url_for('invalid'))
+    count = 0
+    for row in ordersTable:
+      try:
+        if int(row):
+          productIndex = int(row)-1
+          quantity = int(ordersTable[row])
+          count+=1
+      except:
+        continue
+    
+    if count==0:
+      # no updated the element
+      return redirect(url_for('invalid'))
 
 
-  # Creating an Order Id
-  orderId = g.conn.execute('''INSERT INTO PLACESORDER(custid,pay_method,pay_date) VALUES(%s,%s,%s) RETURNING orderid''',session["custId"],paymentMethod,date.today())
-  orderId = orderId.first()[0]
-  # now we need to insert entries in the added to of the items included in the given order
-  for row in ordersTable:
-    try:
-      if int(row):
-        productIndex = int(row)-1
-        quantity = int(ordersTable[row])
-        if quantity!=0:
-          productDetails = productList[productIndex]  
-          g.conn.execute('''INSERT INTO ADDED_TO(orderid,proid,quantity,custid) VALUES(%s,%s,%s,%s)''',orderId,productDetails["proid"],quantity,session["custId"])
-    except:
-      continue
+    # Creating an Order Id
+    orderId = g.conn.execute('''INSERT INTO PLACESORDER(custid,pay_method,pay_date) VALUES(%s,%s,%s) RETURNING orderid''',session["custId"],paymentMethod,date.today())
+    orderId = orderId.first()[0]
+    # now we need to insert entries in the added to of the items included in the given order
+    for row in ordersTable:
+      try:
+        if int(row):
+          productIndex = int(row)-1
+          quantity = int(ordersTable[row])
+          if quantity!=0:
+            productDetails = productList[productIndex]  
+            g.conn.execute('''INSERT INTO ADDED_TO(orderid,proid,quantity,custid) VALUES(%s,%s,%s,%s)''',orderId,productDetails["proid"],quantity,session["custId"])
+      except:
+        continue
+
+  except:
+    redirect(url_for('invalid'))
 
   return render_template('orderplaced.html',orderId = orderId, custId=session['custId'], custName=session["custName"])
 
