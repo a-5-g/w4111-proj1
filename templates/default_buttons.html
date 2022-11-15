@@ -40,7 +40,7 @@ header{
 	<button onclick="history.back()">Go Back</button> 
 	<button type="button" class="rightAlign" onclick="window.location.href='{{ url_for('logout') }}';">Logout</button>
 	<button type="button" class="rightAlignSecond" onclick="window.location.href='{{ url_for('viewOrders',custId = custId) }}';">Orders</button>
-	<button type="button" class="rightAlignThird">Welcome {{custName}}</button>
+	<button type="button" class="rightAlignThird" onclick="window.location.href='{{ url_for('userInformation',custId = custId) }}';">Welcome {{custName}}</button>
 </header>
 
 </html>

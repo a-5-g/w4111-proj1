@@ -1,0 +1,35 @@
+{% with custId=custId,custName=custName %}
+{% include 'default_buttons.html' %}
+{% endwith %}
+<style>
+  label {
+    /* Other styling... */
+    text-align: right;
+    clear: both;
+    float:left;
+    margin-right:15px;
+}
+</style>
+  <fieldset  disabled="enabled" >
+  <form class="modal-content animate" method="POST" action="/userInformation">
+    <div class="container">
+      <h1>User Information</h1>
+      <label><b>Name:</b><input type="text" placeholder="{{ userInfo['name'] }}" name="name">
+      </label>
+      <label><b>Password:</b><input type="text" placeholder="{{ userInfo['password'] }}" name="password">
+      </label>
+      <label><b>Phone:</b><input type="text" placeholder="{{ userInfo['phone'] }}" name="password">
+      </label>
+      <label><b>AptNo:</b><input type="text" placeholder="{{ userInfo['aptno'] }}" name="aptno">
+      </label>
+      <label><b>Street:</b><input type="text" placeholder="{{ userInfo['street'] }}" name="street">
+      </label>
+      <label><b>City:</b><input type="text" placeholder="{{ userInfo['city'] }}" name="city">
+      </label>
+      <label><b>State:</b><input type="text" placeholder="{{ userInfo['state'] }}" name="state">
+      </label>
+    </div>
+  </form>
+</fieldset>
+
+  

@@ -264,6 +264,19 @@ def addNewOrder():
 
   return render_template('orderplaced.html',orderId = orderId, custId=session['custId'], custName=session["custName"])
 
+
+@app.route('/userInformation',methods=['GET'])
+def userInformation():
+  custId = session["custId"]
+  result = g.conn.execute('''SELECT c.password,c.custid, c.name, c.phone, a.street, a.aptno, a.city, a.state, a.zip
+                              FROM Customer c, Address a WHERE c.custid=(%s) AND a.custid = c.custid;''',custId)
+  userInfo = []
+  for info in result:
+    userInfo.append(dict(info))
+
+  return render_template('userProfile.html',custId = custId, userInfo = userInfo[0], custName = session["custName"])
+
+
 if __name__ == "__main__":
   import click
 
