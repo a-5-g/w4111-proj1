@@ -26,16 +26,24 @@ tr:nth-child(even) {
 
   <!-- <h4>The product details are: </h4> -->
 
-  <table>
+  <table name = "details_table" >
+    <tr>
+      <th>Product</th>
+      <th>Price</th>
+      <th>Expiry</th>
+      <th>Category</th>
+      <th>Brand</th>
+      <th>Supplier ID</th>
+      <th>Supplier's phone</th>
+      <th>Supplier's address</th>
+    </tr>
   {% for row in data %}
-      <tr>
       {% set outer_loop = loop.index0 %}
       {% for cell in row %}
-        {% if loop.index0 <= 7 and (outer_loop == 0 or outer_loop == 1)%}
+        {% if loop.index0 <= 7 and outer_loop == 1%}
           <td style="padding: 0.5rem">{{ cell }}</td>
         {% endif %}
       {% endfor %}
-      </tr>
       {% endfor %}
  </table>
 
@@ -43,10 +51,15 @@ tr:nth-child(even) {
 
 
   <table>
+    <tr>
+      <th>Rating</th>
+      <th>Review</th>
+    </tr>
   {% for row in data %}
+  {% set outer_loop = loop.index0 %}
       <tr>
       {% for cell in row %}
-        {% if loop.index0 > 7 %}
+        {% if loop.index0 > 7 and outer_loop >= 1%}
           <td style="padding: 0.5rem">{{ cell }}</td>
         {% endif %}
       {% endfor %}
